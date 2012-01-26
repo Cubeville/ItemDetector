@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.cubeville.itemdetector.command.DetectorCommand;
 import org.cubeville.itemdetector.listener.DetectorListener;
 
 /**
@@ -29,6 +30,7 @@ public class ItemDetector extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	
 	private DetectorListener listener;
+	private DetectorCommand executor;
 	
 	private Map<Block, Detector> detectors = new HashMap<Block, Detector>();
 	private Map<Player, String> actions = new HashMap<Player, String>();
@@ -48,9 +50,12 @@ public class ItemDetector extends JavaPlugin {
 		loadDetectors();
 		
 		listener = new DetectorListener(this);
+		executor = new DetectorCommand(this);
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(listener, this);
+		
+		setupCommands();
 		
 		log.info("[" + name + "] Version " + version + " enabled.");
 	}
@@ -73,6 +78,10 @@ public class ItemDetector extends JavaPlugin {
 		for (Detector d : detectors.values()) {
 			getDatabase().save(d);
 		}
+	}
+	
+	private void setupCommands() {
+		getCommand("itemdetector").setExecutor(executor);
 	}
 	
 	private void setupDatabase() {
