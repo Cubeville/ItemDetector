@@ -1,7 +1,9 @@
 package org.cubeville.itemdetector.listener;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -18,7 +20,7 @@ public class DetectorListener implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPressurePlate(PlayerInteractEvent event) {
+	public void activatePressurePlate(PlayerInteractEvent event) {
 		if (event.getAction() != Action.PHYSICAL) {
 			return;
 		}
@@ -31,6 +33,49 @@ public class DetectorListener implements Listener {
 		
 		if (!plugin.isDetector(block)) {
 			return;
+		}
+		
+		event.getPlayer().getInventory().clear();
+		event.getPlayer().sendMessage(ChatColor.YELLOW + "Your inventory has been cleared!");
+	}
+	
+	public void clickPressurePlate(PlayerInteractEvent event) {
+		if (event.getAction() != Action.LEFT_CLICK_BLOCK) {
+			return;
+		}
+
+		Player player = event.getPlayer();
+		
+		if (plugin.getAction(player).isEmpty()) {
+			return;
+		}
+		
+		Block block = event.getClickedBlock();
+		
+		if (block.getType() != Material.STONE_PLATE && block.getType() != Material.WOOD_PLATE) {
+			return;
+		}
+		
+		if (plugin.getAction(player).equalsIgnoreCase("create")) {
+			if (plugin.isDetector(block)) {
+				player.sendMessage(ChatColor.RED + "This pressure plate already has a detector!");
+				return;
+			} else {
+				plugin.addDetector(player, block);
+				player.sendMessage(ChatColor.GREEN + "Detector plate created successfully.");
+				plugin.setAction(player, "");
+			}
+		} else if (plugin.getAction(player).equalsIgnoreCase("remove")) {
+			if (plugin.isDetector(block)) {
+				if (plugin.getDetector(block).getOwner().equalsIgnoreCase(player.getName())) {
+					plugin.removeDetector(block);
+					player.sendMessage(ChatColor.GREEN + "Your detector has been removed.");
+				} else {
+					player.sendMessage(ChatColor.RED + "You don't own that detector!");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "That pressure plate is not a detector.");
+			}
 		}
 	}
 

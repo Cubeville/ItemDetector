@@ -10,6 +10,7 @@ import javax.persistence.PersistenceException;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,11 +26,12 @@ public class ItemDetector extends JavaPlugin {
 	public String name;
 	public String version;
 	
-	private static final Logger log = Logger.getLogger("Minecraft");
+	public static final Logger log = Logger.getLogger("Minecraft");
 	
 	private DetectorListener listener;
 	
 	private Map<Block, Detector> detectors = new HashMap<Block, Detector>();
+	private Map<Player, String> actions = new HashMap<Player, String>();
 	
 	public void onDisable() {
 		saveDetectors();
@@ -82,6 +84,27 @@ public class ItemDetector extends JavaPlugin {
 		}
 	}
 	
+	public void setAction(final Player player, final String action) {
+		if (action.isEmpty() && actions.containsKey(player)) {
+			actions.remove(player);
+			return;
+		}
+		
+		actions.put(player, action);
+		
+		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			public void run() {
+				if (actions.containsKey(player) && actions.get(player).equals(action)) {
+					actions.remove(player);
+				}
+			}
+		}, 300L);
+	}
+	
+	public String getAction(Player player) {
+		return actions.containsKey(player) ? actions.get(player) : "";
+	}
+	
 	@Override
 	public List<Class<?>> getDatabaseClasses() {
 		List<Class<?>> list = new ArrayList<Class<?>>();
@@ -89,8 +112,30 @@ public class ItemDetector extends JavaPlugin {
 		return list;
 	}
 	
+	public void addDetector(Player owner, Block block) {
+		Detector detector = new Detector();
+		detector.setOwner(owner.getName());
+		detector.setWorld(block.getWorld().getName());
+		detector.setX(block.getX());
+		detector.setY(block.getY());
+		detector.setZ(block.getZ());
+		detectors.put(block, detector);
+		getDatabase().save(detector);
+	}
+	
+	public void removeDetector(Block block) {
+		if (detectors.containsKey(block)) {
+			getDatabase().delete(detectors.get(block));
+			detectors.remove(block);
+		}
+	}
+	
 	public boolean isDetector(Block block) {
 		return detectors.containsKey(block);
+	}
+	
+	public Detector getDetector(Block block) {
+		return detectors.containsKey(block) ? detectors.get(block) : null;
 	}
 
 }
