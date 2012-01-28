@@ -23,8 +23,13 @@ public class DetectorCommand implements CommandExecutor {
 		
 		Player player = (Player) sender;
 		
+		if (!player.hasPermission("ItemDetector.create")) {
+			return true;
+		}
+		
 		if (args.length != 1) {
 			player.sendMessage(ChatColor.RED + "Invalid syntax. /" + label + " <create/remove>");
+			return true;
 		}
 		
 		if (args[0].equalsIgnoreCase("create")) {
@@ -33,6 +38,8 @@ public class DetectorCommand implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("remove")) {
 			plugin.setAction(player, "remove");
 			player.sendMessage(ChatColor.GREEN + "Punch a pressure plate to remove its detector.");
+		} else {
+			player.sendMessage(ChatColor.RED + "Invalid syntax. /" + label + " <create/remove>");
 		}
 				
 		return true;

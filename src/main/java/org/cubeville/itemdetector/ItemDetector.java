@@ -35,9 +35,7 @@ public class ItemDetector extends JavaPlugin {
 	private Map<Block, Detector> detectors = new HashMap<Block, Detector>();
 	private Map<Player, String> actions = new HashMap<Player, String>();
 	
-	public void onDisable() {
-		saveDetectors();
-		
+	public void onDisable() {		
 		log.info("[" + name + "] Version " + version + " disabled.");
 	}
 
@@ -51,7 +49,7 @@ public class ItemDetector extends JavaPlugin {
 		
 		listener = new DetectorListener(this);
 		executor = new DetectorCommand(this);
-
+		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(listener, this);
 		
@@ -71,12 +69,6 @@ public class ItemDetector extends JavaPlugin {
 			} else {
 				detectors.put(block, d);
 			}
-		}
-	}
-	
-	private void saveDetectors() {
-		for (Detector d : detectors.values()) {
-			getDatabase().save(d);
 		}
 	}
 	
@@ -124,6 +116,7 @@ public class ItemDetector extends JavaPlugin {
 	public void addDetector(Player owner, Block block) {
 		Detector detector = new Detector();
 		detector.setOwner(owner.getName());
+		detector.setName("detector");
 		detector.setWorld(block.getWorld().getName());
 		detector.setX(block.getX());
 		detector.setY(block.getY());

@@ -35,10 +35,12 @@ public class DetectorListener implements Listener {
 			return;
 		}
 		
+		event.getPlayer().getInventory().setArmorContents(null);
 		event.getPlayer().getInventory().clear();
 		event.getPlayer().sendMessage(ChatColor.YELLOW + "Your inventory has been cleared!");
 	}
 	
+	@EventHandler
 	public void clickPressurePlate(PlayerInteractEvent event) {
 		if (event.getAction() != Action.LEFT_CLICK_BLOCK) {
 			return;
@@ -65,6 +67,8 @@ public class DetectorListener implements Listener {
 				player.sendMessage(ChatColor.GREEN + "Detector plate created successfully.");
 				plugin.setAction(player, "");
 			}
+			
+			event.setCancelled(true);
 		} else if (plugin.getAction(player).equalsIgnoreCase("remove")) {
 			if (plugin.isDetector(block)) {
 				if (plugin.getDetector(block).getOwner().equalsIgnoreCase(player.getName())) {
@@ -76,6 +80,8 @@ public class DetectorListener implements Listener {
 			} else {
 				player.sendMessage(ChatColor.RED + "That pressure plate is not a detector.");
 			}
+			
+			event.setCancelled(true);
 		}
 	}
 

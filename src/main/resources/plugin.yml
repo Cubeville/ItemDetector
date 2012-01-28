@@ -2,10 +2,11 @@ name: ItemDetector
 main: org.cubeville.itemdetector.ItemDetector
 version: ${project.version}
 authors: [Cubeville, GoalieGuy6]
+database: true
 description: Creates pressure plates that can detect and remove items from a player inventory
 
 commands:
     itemdetector:
         aliases: [detector]
-	description: Create/modify item detector plates
-	usage: /<command>
+        description: Create/modify item detector plates
+        usage: /<command>
