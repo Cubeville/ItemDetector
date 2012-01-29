@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.cubeville.itemdetector.ItemDetector;
 
 public class DetectorListener implements Listener {
@@ -26,6 +27,7 @@ public class DetectorListener implements Listener {
 		}
 		
 		Block block = event.getClickedBlock();
+		Player player = event.getPlayer();
 		
 		if (block.getType() != Material.STONE_PLATE && block.getType() != Material.WOOD_PLATE) {
 			return;
@@ -35,9 +37,29 @@ public class DetectorListener implements Listener {
 			return;
 		}
 		
-		event.getPlayer().getInventory().setArmorContents(null);
-		event.getPlayer().getInventory().clear();
-		event.getPlayer().sendMessage(ChatColor.YELLOW + "Your inventory has been cleared!");
+		boolean empty = true;
+		
+		for (ItemStack item : player.getInventory().getContents()) {
+			if (item != null) {
+				empty = false;
+				break;
+			}
+		}
+		
+		for (ItemStack item : player.getInventory().getArmorContents()) {
+			if (item != null) {
+				empty = false;
+				break;
+			}
+		}
+		
+		if (empty) {
+			return;
+		}
+		
+		player.getInventory().setArmorContents(null);
+		player.getInventory().clear();
+		player.sendMessage(ChatColor.YELLOW + "Your inventory has been cleared!");
 	}
 	
 	@EventHandler
