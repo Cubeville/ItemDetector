@@ -37,6 +37,10 @@ public class DetectorListener implements Listener {
 			return;
 		}
 		
+		if (player.hasPermission("itemdetector.bypass")) {
+			return;
+		}
+		
 		boolean empty = true;
 		
 		for (ItemStack item : player.getInventory().getContents()) {

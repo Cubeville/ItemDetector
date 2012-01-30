@@ -23,7 +23,7 @@ public class DetectorCommand implements CommandExecutor {
 		
 		Player player = (Player) sender;
 		
-		if (!player.hasPermission("ItemDetector.create")) {
+		if (!player.hasPermission("itemdetector.create")) {
 			return true;
 		}
 		
