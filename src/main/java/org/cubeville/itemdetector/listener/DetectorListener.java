@@ -47,7 +47,7 @@ public class DetectorListener implements Listener {
 		}
 		
 		for (ItemStack item : player.getInventory().getArmorContents()) {
-			if (item != null) {
+			if (item.getType() != Material.AIR) {
 				empty = false;
 				break;
 			}
