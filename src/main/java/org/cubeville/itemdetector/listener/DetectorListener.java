@@ -87,9 +87,9 @@ public class DetectorListener implements Listener {
 			} else {
 				plugin.addDetector(player, block);
 				player.sendMessage(ChatColor.GREEN + "Detector plate created successfully.");
-				plugin.setAction(player, "");
 			}
 			
+			plugin.setAction(player, "");
 			event.setCancelled(true);
 		} else if (plugin.getAction(player).equalsIgnoreCase("remove")) {
 			if (plugin.isDetector(block)) {
@@ -103,6 +103,7 @@ public class DetectorListener implements Listener {
 				player.sendMessage(ChatColor.RED + "That pressure plate is not a detector.");
 			}
 			
+			plugin.setAction(player, "");
 			event.setCancelled(true);
 		}
 	}
